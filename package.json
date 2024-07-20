@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@tanstack/vue-table": "^8.19.3",
+    "@vee-validate/zod": "^4.13.2",
     "@vueuse/core": "^10.11.0",
     "axios": "^1.7.2",
     "class-variance-authority": "^0.7.0",
@@ -19,7 +20,9 @@
     "sweetalert2": "^11.12.3",
     "tailwind-merge": "^2.4.0",
     "tailwindcss-animate": "^1.0.7",
-    "vue": "^3.4.31"
+    "vee-validate": "^4.13.2",
+    "vue": "^3.4.31",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@iconify-json/radix-icons": "^1.1.14",

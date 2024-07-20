@@ -28,6 +28,68 @@ interface ListResponse {
   data: Payment[];
 }
 
+interface Concepto {
+  ClaveProdServ: string;
+  Cantidad: number;
+  ClaveUnidad: string;
+  Unidad: string;
+  ValorUnitario: number;
+  Descripcion: string;
+  AddendaEnvasesUniversales: Addenda;
+  Impuestos: Impuestos;
+}
+
+interface Addenda {
+  idFactura: string;
+  fechaMensaje: string;
+  idTransaccion: string;
+  transaccion: string;
+  consecutivo: string;
+  idPedido: string;
+  albaran: string;
+  monedaCve: string;
+  tipoCambio: number;
+  totalM: string;
+  subtotalM: string;
+  impuestoM: string;
+  baseImpuesto: number;
+}
+
+interface Traslado {
+  Base: number;
+  Impuesto: string;
+  TipoFactor: string;
+  TasaOCuota: number;
+  Importe: number;
+}
+
+interface Local {
+  Base: number;
+  Impuesto: string;
+  TipoFactor: string;
+  TasaOCuota: number;
+  Importe: number;
+}
+
+interface Impuestos {
+  Traslados: Traslado[];
+  Locales: Local[];
+}
+
+interface CfdiData {
+  Receptor: {
+    UID: string;
+  };
+  TipoDocumento: string;
+  Conceptos: Concepto[];
+  UsoCFDI: string;
+  Serie: number;
+  FormaPago: string;
+  MetodoPago: string;
+  Moneda: string;
+  EnviarCorreo: boolean;
+}
+
 /**
  * Hook para manejar CDFI
  * @returns {{
@@ -49,7 +111,7 @@ export function useCdfi() {
   const isLoading = ref(false);
 
   const currentPage = ref(1);
-  const perPage = ref(15);
+  const perPage = ref(20);
   const perPageOptions = ref([5, 10, 15, 20]);
   const total = ref(0);
   const from = ref(0);
@@ -159,6 +221,28 @@ export function useCdfi() {
     }
   };
 
+  const createCfdi = async (cfdiData : CfdiData) => {
+  isLoading.value = true;
+  try {
+    await axios.post(`http://localhost:3000/api/factura/cfdi40/create`, cfdiData)
+      .then(() => {
+        Swal.fire({
+          icon: "success",
+          title: "¡CFDI Creado!",
+          text: `El CFDI ha sido creado exitosamente.`,
+          customClass: {
+            confirmButton: "btn btn-success",
+          },
+        });
+      })
+      .catch((err) => handAlert(err));
+  } catch (err) {
+    handAlert(err);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
   return {
     listResponse,
     cancelResponse,
@@ -175,5 +259,6 @@ export function useCdfi() {
     from,
     to,
     totalPages,
+    createCfdi,
   };
 }

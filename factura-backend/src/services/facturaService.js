@@ -59,8 +59,25 @@ const cancelCfdi = async (cfdiUid, body) => {
   }
 };
 
+const createCfdi = async (body) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/v4/cfdi40/create`, body, {
+      headers: {
+        "Content-Type": "application/json",
+        "f-Api-Key": API_KEY,
+        "f-Secret-Key": SECRET_KEY,
+        "f-PLUGIN": "9d40959c8f7ed5785cb14c0e3b033eeb8252416ed",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response ? error.response.data : error.message);
+  }
+};
+
 module.exports = {
   makeRequest,
   sendEmail,
   cancelCfdi,
+  createCfdi,
 };
