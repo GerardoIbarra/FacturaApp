@@ -1,4 +1,4 @@
-import { useCdfi } from "../components/app/cdfi/useCdfi";
+import { useCdfi } from "../hooks/useCdfi";
 import apiClient from "../components/app/response/httpService";
 import Swal from "sweetalert2";
 import MockAdapter from "axios-mock-adapter";

@@ -31,7 +31,7 @@
                 <th
                   class="py-2 px-4 border-b text-gray-800 dark:text-gray-200 dark:bg-neutral-500 bg-zinc-400 rounded-tl-lg"
                 >
-                  iD
+                  ID
                 </th>
                 <th
                   class="py-2 px-4 border-b text-gray-800 dark:text-gray-200 dark:bg-neutral-500 bg-zinc-400"
@@ -262,7 +262,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
 import Card from "@/components/ui/card/Card.vue";
-import { useCdfi } from "./useCdfi";
+import { useCdfi } from "../../../hooks/useCdfi";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -307,7 +307,6 @@ const {
   from,
   to,
   totalPages,
-  createCfdi,
 } = useCdfi();
 
 const position = ref("bottom");

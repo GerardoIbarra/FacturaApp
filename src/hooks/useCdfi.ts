@@ -1,8 +1,8 @@
 import { computed, ref } from "vue";
-import { Payment, ListResponse, CfdiData } from "../../../interface/interface";
-import apiClient from "../../../components/app/response/httpService";
-import { handleRequest } from "../../../components/app/response/handleResponse";
-import { StatusType } from "../../../interface/interface"; // Importa el tipo específico
+import { Payment, ListResponse, CfdiData } from "../interface/interface";
+import apiClient from "../components/app/response/httpService";
+import { handleRequest } from "../components/app/response/handleResponse";
+import { StatusType } from "../interface/interface"; // Importa el tipo específico
 
 const useCdfiState = () => {
   const listResponse = ref<ListResponse | null>(null);
