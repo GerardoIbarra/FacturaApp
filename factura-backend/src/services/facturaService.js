@@ -1,4 +1,3 @@
-// services/facturaService.js
 const axios = require("axios");
 
 const API_KEY =
@@ -6,15 +5,19 @@ const API_KEY =
 const SECRET_KEY =
   "JDJ5JDEwJHRXbFROTHNiYzRzTXBkRHNPUVA3WU83Y2hxTHdpZHltOFo5UEdoMXVoakNKWTl5aDQwdTFT";
 const BASE_URL = "https://sandbox.factura.com/api";
+const PLUGIN_KEY = "9d40959c7fed575bc81c40b3e033eeb8252416ed";
 
-const makeRequest = async (endpoint, body) => {
+const request = async (method, endpoint, body = null) => {
   try {
-    const response = await axios.post(`${BASE_URL}${endpoint}`, body, {
+    const response = await axios({
+      method,
+      url: `${BASE_URL}${endpoint}`,
+      data: body,
       headers: {
         "Content-Type": "application/json",
         "f-Api-Key": API_KEY,
         "f-Secret-Key": SECRET_KEY,
-        "f-PLUGIN": "9d40959c7fed575bc81c40b3e033eeb8252416ed",
+        "f-PLUGIN": PLUGIN_KEY,
       },
     });
     return response.data;
@@ -23,57 +26,14 @@ const makeRequest = async (endpoint, body) => {
   }
 };
 
-const sendEmail = async (cfdiUid) => {
-  try {
-    const response = await axios.get(`${BASE_URL}/v4/cfdi40/${cfdiUid}/email`, {
-      headers: {
-        "Content-Type": "application/json",
-        "f-Api-Key": API_KEY,
-        "f-Secret-Key": SECRET_KEY,
-        "f-PLUGIN": "9d40959c7fed575bc81c40b3e033eeb8252416ed",
-      },
-    });
-    return response.data;
-  } catch (error) {
-    throw new Error(error.response ? error.response.data : error.message);
-  }
-};
+const makeRequest = (endpoint, body) => request("post", endpoint, body);
 
-const cancelCfdi = async (cfdiUid, body) => {
-  try {
-    const response = await axios.post(
-      `${BASE_URL}/v4/cfdi40/${cfdiUid}/cancel`,
-      body,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          "f-Api-Key": API_KEY,
-          "f-Secret-Key": SECRET_KEY,
-          "f-PLUGIN": "9d40959c7fed575bc81c40b3e033eeb8252416ed",
-        },
-      }
-    );
-    return response.data;
-  } catch (error) {
-    throw new Error(error.response ? error.response.data : error.message);
-  }
-};
+const sendEmail = (cfdiUid) => request("get", `/v4/cfdi40/${cfdiUid}/email`);
 
-const createCfdi = async (body) => {
-  try {
-    const response = await axios.post(`${BASE_URL}/v4/cfdi40/create`, body, {
-      headers: {
-        "Content-Type": "application/json",
-        "f-Api-Key": API_KEY,
-        "f-Secret-Key": SECRET_KEY,
-        "f-PLUGIN": "9d40959c8f7ed5785cb14c0e3b033eeb8252416ed",
-      },
-    });
-    return response.data;
-  } catch (error) {
-    throw new Error(error.response ? error.response.data : error.message);
-  }
-};
+const cancelCfdi = (cfdiUid, body) =>
+  request("post", `/v4/cfdi40/${cfdiUid}/cancel`, body);
+
+const createCfdi = (body) => request("post", "/v4/cfdi40/create", body);
 
 module.exports = {
   makeRequest,
