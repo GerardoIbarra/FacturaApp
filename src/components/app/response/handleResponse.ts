@@ -1,15 +1,18 @@
-import Swal from 'sweetalert2';
-import { handleHttpError } from '../../app/error/main';
+import Swal from "sweetalert2";
+import { handleHttpError } from "../../app/error/main";
 
-export async function handleRequest(promise: Promise<any>, successMessage: string) {
+export async function handleRequest(
+  promise: Promise<any>,
+  successMessage: string
+) {
   try {
     const response = await promise;
     Swal.fire({
-      icon: 'success',
+      icon: "success",
       title: successMessage,
-      text: 'La operación se completó exitosamente',
+      text: "La operación se completó exitosamente",
       customClass: {
-        confirmButton: 'btn btn-success',
+        confirmButton: "btn btn-success",
       },
     });
     return response.data;

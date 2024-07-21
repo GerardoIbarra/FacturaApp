@@ -307,7 +307,9 @@ const {
   from,
   to,
   totalPages,
+  createCfdi,
 } = useCdfi();
+
 const position = ref("bottom");
 
 const CancelarCdfiAlert = (UID: string) => {
