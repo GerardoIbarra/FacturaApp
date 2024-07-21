@@ -1,94 +1,8 @@
 import axios from "axios";
 import Swal from "sweetalert2";
 import { computed, ref } from "vue";
-
-interface Payment {
-  UUID: string;
-  UID: string;
-  Folio: string;
-  FechaTimbrado: string;
-  Receptor: string;
-  RazonSocialReceptor: string;
-  ReferenceClient: number;
-  Total: string;
-  Subtotal: string;
-  NumOrder: string | null;
-  Status: string;
-  Version: string;
-  document?: string;
-}
-
-interface ListResponse {
-  total: number;
-  per_page: number;
-  current_page: number;
-  last_page: number;
-  from: number;
-  to: number;
-  data: Payment[];
-}
-
-interface Concepto {
-  ClaveProdServ: string;
-  Cantidad: number;
-  ClaveUnidad: string;
-  Unidad: string;
-  ValorUnitario: number;
-  Descripcion: string;
-  AddendaEnvasesUniversales: Addenda;
-  Impuestos: Impuestos;
-}
-
-interface Addenda {
-  idFactura: string;
-  fechaMensaje: string;
-  idTransaccion: string;
-  transaccion: string;
-  consecutivo: string;
-  idPedido: string;
-  albaran: string;
-  monedaCve: string;
-  tipoCambio: number;
-  totalM: string;
-  subtotalM: string;
-  impuestoM: string;
-  baseImpuesto: number;
-}
-
-interface Traslado {
-  Base: number;
-  Impuesto: string;
-  TipoFactor: string;
-  TasaOCuota: number;
-  Importe: number;
-}
-
-interface Local {
-  Base: number;
-  Impuesto: string;
-  TipoFactor: string;
-  TasaOCuota: number;
-  Importe: number;
-}
-
-interface Impuestos {
-  Traslados: Traslado[];
-  Locales: Local[];
-}
-
-interface CfdiData {
-  Receptor: {
-    UID: string;
-  };
-  TipoDocumento: string;
-  Conceptos: Concepto[];
-  UsoCFDI: string;
-  Serie: number;
-  FormaPago: string;
-  MetodoPago: string;
-  Moneda: string;
-  EnviarCorreo: boolean;
-}
+import { Payment, ListResponse, CfdiData } from "../../../interface/interface";
+import { handleHttpError } from "../../app/error/main";
 
 /**
  * Hook para manejar CDFI
@@ -181,9 +95,9 @@ export function useCdfi() {
             },
           });
         })
-        .catch((err) => handAlert(err));
+        .catch((err) =>  handleHttpError(err));
     } catch (err) {
-      handAlert(err);
+       handleHttpError(err);
     }
   };
 
@@ -201,25 +115,12 @@ export function useCdfi() {
             },
           });
         })
-        .catch((err) => handAlert(err));
+        .catch((err) =>  handleHttpError(err));
     } catch (err) {
-      handAlert(err);
+      handleHttpError(err);
     }
   };
 
-  const handAlert = (err: any) => {
-    console.error(err);
-    if (typeof err.response !== "undefined") {
-      Swal.fire({
-        icon: "error",
-        title: "¡Error!",
-        text: `${err.response.data.errors.error}`,
-        customClass: {
-          confirmButton: "btn btn-secondary",
-        },
-      });
-    }
-  };
 
   const createCfdi = async (cfdiData : CfdiData) => {
   isLoading.value = true;
@@ -235,9 +136,9 @@ export function useCdfi() {
           },
         });
       })
-      .catch((err) => handAlert(err));
+      .catch((err) =>  handleHttpError(err));
   } catch (err) {
-    handAlert(err);
+     handleHttpError(err);
   } finally {
     isLoading.value = false;
   }
