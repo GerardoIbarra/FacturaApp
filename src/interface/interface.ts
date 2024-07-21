@@ -9,7 +9,7 @@ export interface Payment {
   Total: string;
   Subtotal: string;
   NumOrder: string | null;
-  Status: string;
+  Status:  StatusType;
   Version: string;
   document?: string;
 }
@@ -85,3 +85,4 @@ export interface CfdiData {
   Moneda: string;
   EnviarCorreo: boolean;
 }
+export type StatusType = "Enviada" | "Eliminada" | "Pendiente" | "Cancelada" | "Rechazada" | "Autorizada" | "Anulada" | "enviada" | "eliminada" | "pendiente" | "cancelada" | "rechazada" | "autorizada" | "anulada";

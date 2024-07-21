@@ -199,7 +199,6 @@
                                 d="M9.8 7.5l2.982 3.28a3 3 0 0 0 4.238 .202l3.28 -2.982"
                               />
                             </svg>
-
                             <span>Enviar</span>
                           </Button>
                         </DropdownMenuRadioItem>
@@ -233,7 +232,6 @@
             <PaginationList v-slot="{ items }" class="flex items-center gap-1">
               <PaginationFirst @click="goToPage(1)" />
               <PaginationPrev @click="goToPage(currentPage - 1)" />
-
               <template v-for="(item, index) in items">
                 <PaginationListItem
                   v-if="item.type === 'page'"
@@ -251,7 +249,6 @@
                 </PaginationListItem>
                 <PaginationEllipsis v-else :key="item.type" :index="index" />
               </template>
-
               <PaginationNext @click="goToPage(currentPage + 1)" />
               <PaginationLast @click="goToPage(totalPages)" />
             </PaginationList>
@@ -263,18 +260,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, computed } from "vue";
+import { ref, onMounted, watch } from "vue";
 import Card from "@/components/ui/card/Card.vue";
 import { useCdfi } from "./useCdfi";
-import DropdownActions from "../dropdown/ActionsIndex.vue";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-} from "@/components/ui/select";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -295,6 +283,7 @@ import {
 import { Button } from "@/components/ui/button";
 import Swal from "sweetalert2";
 import CreateCdfiModal from "./cdfiModal.vue";
+import { StatusType } from "../../../interface/interface"; // Importa el tipo específico
 
 const isModalOpen = ref(false);
 
@@ -314,7 +303,6 @@ const {
   sendEmailCfdi,
   currentPage,
   perPage,
-  perPageOptions,
   total,
   from,
   to,
@@ -364,7 +352,7 @@ const sendCdfi = (UID: string) => {
   });
 };
 
-const getStatusClass = (status: "Enviada" | "Eliminada" | "Pendiente") => {
+const getStatusClass = (status: StatusType): string => {
   switch (status) {
     case "Enviada":
       return "text-green-500 dark:text-green-500";
@@ -375,11 +363,6 @@ const getStatusClass = (status: "Enviada" | "Eliminada" | "Pendiente") => {
     default:
       return "text-gray-800 dark:text-gray-200";
   }
-};
-
-const handlePerPageChange = (value: string) => {
-  perPage.value = parseInt(value, 10);
-  fetchCdfiList(currentPage.value, perPage.value);
 };
 
 const goToPage = (page: number) => {

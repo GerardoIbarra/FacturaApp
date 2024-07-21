@@ -1,8 +1,8 @@
-import axios from "axios";
-import Swal from "sweetalert2";
-import { computed, ref } from "vue";
-import { Payment, ListResponse, CfdiData } from "../../../interface/interface";
-import { handleHttpError } from "../../app/error/main";
+import { computed, ref } from 'vue';
+import { Payment, ListResponse, CfdiData } from '../../../interface/interface';
+import apiClient from '../../../components/app/response/httpService';
+import { handleRequest } from '../../../components/app/response/handleResponse';
+import { StatusType } from '../../../interface/interface'; // Importa el tipo específico
 
 /**
  * Hook para manejar CDFI
@@ -13,46 +13,43 @@ import { handleHttpError } from "../../app/error/main";
  *   error: import("vue").Ref<string | null>,
  *   isLoading: import("vue").Ref<boolean>,
  *   fetchCdfiList: () => Promise<void>,
- *   cancelCdfi: () => Promise<void>,
+ *   cancelCdfi: (cfdiUid: string, motivo: string, folioSustituto: string) => Promise<void>,
  *   sendEmailCfdi: (cfdiUid: string) => Promise<void>,
  * }}
  */
 export function useCdfi() {
   const listResponse = ref<ListResponse | null>(null);
-  const cancelResponse = ref(null);
-  const emailResponse = ref(null);
+  const cancelResponse = ref<any>(null);
+  const emailResponse = ref<any>(null);
   const error = ref<string | null>(null);
-  const isLoading = ref(false);
+  const isLoading = ref<boolean>(false);
 
-  const currentPage = ref(1);
-  const perPage = ref(20);
-  const perPageOptions = ref([5, 10, 15, 20]);
-  const total = ref(0);
-  const from = ref(0);
-  const to = ref(0);
+  const currentPage = ref<number>(1);
+  const perPage = ref<number>(20);
+  const perPageOptions = ref<number[]>([5, 10, 15, 20]);
+  const total = ref<number>(0);
+  const from = ref<number>(0);
+  const to = ref<number>(0);
 
-  const capitalizeFirstLetter = (string: string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
-  };
+  const capitalizeFirstLetter = (string: string) => 
+    string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 
-  const totalPages = computed(() => {
-    return Math.ceil(total.value / perPage.value);
-  });
+  const totalPages = computed(() => 
+    Math.ceil(total.value / perPage.value)
+  );
 
-  const fetchCdfiList = async (page = 1, perPage = 15) => {
+  const fetchCdfiList = async (page = 1, perPageVal = 15) => {
     isLoading.value = true;
     try {
-      const response = await axios.get(
-        `http://localhost:3000/api/factura/list?page=${page}&per_page=${perPage}`
-      );
+      const response = await apiClient.get(`/factura/list?page=${page}&per_page=${perPageVal}`);
       if (response.data && Array.isArray(response.data.data)) {
         response.data.data = response.data.data.map((payment: Payment) => ({
           ...payment,
-          Total: `$${parseFloat(payment.Total).toLocaleString("en-US", {
+          Total: `$${parseFloat(payment.Total).toLocaleString('en-US', {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           })}`,
-          Status: capitalizeFirstLetter(payment.Status),
+          Status: capitalizeFirstLetter(payment.Status) as StatusType, 
         }));
         listResponse.value = response.data;
 
@@ -64,85 +61,46 @@ export function useCdfi() {
           currentPage.value = listResponse.value.current_page;
         }
 
-        console.log("Datos cargados:", listResponse.value);
+        console.log('Datos cargados:', listResponse.value);
       } else {
-        throw new Error("Estructura de datos no válida");
+        throw new Error('Estructura de datos no válida');
       }
     } catch (err) {
-      error.value = err.message || "An error occurred";
-      console.error("Error al cargar los datos:", err);
+      error.value = err.message || 'An error occurred';
+      console.error('Error al cargar los datos:', err);
     } finally {
       isLoading.value = false;
     }
   };
 
-  const cancelCdfi = async (
-    cfdiUid: string,
-    motivo: string,
-    folioSustituto: string
-  ) => {
-    try {
-      const data = { motivo, folioSustituto };
-      await axios
-        .post(`http://localhost:3000/api/factura/cancel/${cfdiUid}`, data)
-        .then(() => {
-          Swal.fire({
-            icon: "success",
-            title: "¡Se cancelo correctamente Enviado!",
-            text: `Se cancelo el CFDI, fue enviado exitosamente`,
-            customClass: {
-              confirmButton: "btn btn-success",
-            },
-          });
-        })
-        .catch((err) =>  handleHttpError(err));
-    } catch (err) {
-       handleHttpError(err);
-    }
+  const cancelCdfi = async (cfdiUid: string, motivo: string, folioSustituto: string) => {
+    const data = { motivo, folioSustituto };
+    await handleRequest(
+      apiClient.post(`/factura/cancel/${cfdiUid}`, data),
+      '¡Se cancelo correctamente Enviado!'
+    );
   };
 
   const sendEmailCfdi = async (cfdiUid: string) => {
-    try {
-      await axios
-        .get(`http://localhost:3000/api/factura/cfdi/${cfdiUid}/email`)
-        .then(() => {
-          Swal.fire({
-            icon: "success",
-            title: "¡Correo Enviado!",
-            text: `El correo fue enviado exitosamente`,
-            customClass: {
-              confirmButton: "btn btn-success",
-            },
-          });
-        })
-        .catch((err) =>  handleHttpError(err));
-    } catch (err) {
-      handleHttpError(err);
-    }
+    await handleRequest(
+      apiClient.get(`/factura/cfdi/${cfdiUid}/email`),
+      '¡Correo Enviado!'
+    );
   };
 
-
-  const createCfdi = async (cfdiData : CfdiData) => {
-  isLoading.value = true;
-  try {
-    await axios.post(`http://localhost:3000/api/factura/cfdi40/create`, cfdiData)
-      .then(() => {
-        Swal.fire({
-          icon: "success",
-          title: "¡CFDI Creado!",
-          text: `El CFDI ha sido creado exitosamente.`,
-          customClass: {
-            confirmButton: "btn btn-success",
-          },
-        });
-      })
-      .catch((err) =>  handleHttpError(err));
-  } catch (err) {
-     handleHttpError(err);
-  } finally {
-    isLoading.value = false;
-  }
-};
+  const createCfdi = async (cfdiData: CfdiData) => {
+    isLoading.value = true;
+    try {
+      await handleRequest(
+        apiClient.post('/factura/cfdi40/create', cfdiData),
+        '¡CFDI Creado!'
+      );
+    } catch (err) {
+      console.error('Error al crear el CFDI:', err);
+    } finally {
+      isLoading.value = false;
+    }
+  };
 
   return {
     listResponse,
