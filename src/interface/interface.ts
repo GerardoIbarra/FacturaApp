@@ -31,24 +31,7 @@ export interface Concepto {
   Unidad: string;
   ValorUnitario: number;
   Descripcion: string;
-  AddendaEnvasesUniversales: Addenda;
-  Impuestos: Impuestos;
-}
-
-export interface Addenda {
-  idFactura: string;
-  fechaMensaje: string;
-  idTransaccion: string;
-  transaccion: string;
-  consecutivo: string;
-  idPedido: string;
-  albaran: string;
-  monedaCve: string;
-  tipoCambio: number;
-  totalM: string;
-  subtotalM: string;
-  impuestoM: string;
-  baseImpuesto: number;
+  Descuento?: string;
 }
 
 export interface Traslado {

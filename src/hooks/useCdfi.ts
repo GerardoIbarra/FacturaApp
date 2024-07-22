@@ -1,8 +1,8 @@
 import { computed, ref } from "vue";
-import { Payment, ListResponse, CfdiData } from "../interface/interface";
+import { Payment, ListResponse } from "../interface/interface";
 import apiClient from "../components/app/response/httpService";
 import { handleRequest } from "../components/app/response/handleResponse";
-import { StatusType } from "../interface/interface"; // Importa el tipo específico
+import { StatusType } from "../interface/interface";
 
 const useCdfiState = () => {
   const listResponse = ref<ListResponse | null>(null);
@@ -62,7 +62,7 @@ const fetchCdfiList = async (
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         })}`,
-        Status: capitalizeFirstLetter(payment.Status), // Asegúrate de usar el tipo correcto aquí
+        Status: capitalizeFirstLetter(payment.Status),
       }));
       state.listResponse.value = response.data;
 
@@ -73,8 +73,6 @@ const fetchCdfiList = async (
         state.perPage.value = state.listResponse.value.per_page;
         state.currentPage.value = state.listResponse.value.current_page;
       }
-
-      console.log("Datos cargados:", state.listResponse.value);
     } else {
       throw new Error("Estructura de datos no válida");
     }
@@ -105,21 +103,6 @@ const sendEmailCfdi = async (cfdiUid: string) => {
   );
 };
 
-const createCfdi = async (cfdiData: CfdiData) => {
-  const state = useCdfiState();
-  state.isLoading.value = true;
-  try {
-    await handleRequest(
-      apiClient.post("/factura/cfdi40/create", cfdiData),
-      "¡CFDI Creado!"
-    );
-  } catch (err) {
-    console.error("Error al crear el CFDI:", err);
-  } finally {
-    state.isLoading.value = false;
-  }
-};
-
 export function useCdfi() {
   const state = useCdfiState();
 
@@ -129,6 +112,5 @@ export function useCdfi() {
       fetchCdfiList(state, page, perPageVal),
     cancelCdfi,
     sendEmailCfdi,
-    createCfdi: (cfdiData: CfdiData) => createCfdi(cfdiData),
   };
 }
