@@ -368,17 +368,22 @@ const { createCfdi } = useModal();
 
 const formSchema = toTypedSchema(
   z.object({
-    serie: z.number().min(2).max(50),
-    documentType: z.string().nonempty(),
-    formaPago: z.string().nonempty(),
-    useCdfi: z.string().nonempty(),
-    count: z.number().min(1).max(50),
-    claveProdServ: z.string().nonempty(),
-    claveUnidad: z.string().nonempty(),
-    unidad: z.string().nonempty(),
-    valueUnity: z.number().min(1).max(50),
-    description: z.string().nonempty(),
-    descuento: z.string().nonempty(),
+    /* 
+
+    problem with multiple values by validateSchema
+
+ serie: z.number().min(2).max(50),
+ documentType: z.string().nonempty(),
+ formaPago: z.string().nonempty(),
+ useCdfi: z.string().nonempty(),
+ count: z.number().min(1).max(50),
+ claveProdServ: z.string().nonempty(),
+ claveUnidad: z.string().nonempty(),
+ unidad: z.string().nonempty(),
+ valueUnity: z.number().min(1).max(50),
+ description: z.string().nonempty(),
+ descuento: z.string().nonempty(),
+ */
   })
 );
 
